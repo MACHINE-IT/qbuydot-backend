@@ -20,7 +20,7 @@ const getCartByUser = async (user) => {
   const cart = await Cart.findOne({ email: user.email });
 
   if (!cart) {
-    throw new ApiError(httpStatus.NOT_FOUND, "User does not have a cart");
+    throw new ApiError(httpStatus.NOT_FOUND, "User does not have a cart.");
   }
 
   return cart;
