@@ -20,7 +20,7 @@ const getCartByUser = async (user) => {
   const cart = await Cart.findOne({ email: user.email });
 
   if (!cart) {
-    throw new ApiError(httpStatus.NOT_FOUND, "User does not have a cart");
+    throw new ApiError(httpStatus.NOT_FOUND, "User does not have a cart.");
   }
 
   return cart;
@@ -69,7 +69,7 @@ const addProductToCart = async (user, productId, quantity) => {
   if (!product) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Product doesn't exist in database"
+      "Product doesn't exist."
     );
   }
 
@@ -121,7 +121,7 @@ const updateProductInCart = async (user, productId, quantity) => {
   if (!cart) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "User does not have a cart. Use POST to create cart and add a product"
+      "User does not have a cart. To create cart, please add a product"
     );
   }
 
@@ -130,7 +130,7 @@ const updateProductInCart = async (user, productId, quantity) => {
   if (!product) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
-      "Product doesn't exist in database"
+      "Product doesn't exist."
     );
   }
 
@@ -210,11 +210,14 @@ const deleteProductFromCart = async (user, productId) => {
 const checkout = async (user) => {
   const cart = await Cart.findOne({ email: user.email })
 
-  if (cart == null) {
-    throw new ApiError(httpStatus.NOT_FOUND, "You do not have a cart. Please add items to purchase.");
+
+  if(cart == null){
+    throw new ApiError(httpStatus.NOT_FOUND,"You do not have a cart to checkout.");
   }
-  if (cart.cartItems.length == 0) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "You do not have items added in the cart.");
+  if(cart.cartItems.length==0)
+  {
+    throw new ApiError(httpStatus.BAD_REQUEST,"You do not have any items in the cart to checkout.");
+
   }
 
   const hasSetNonDefaultAddress = await user.hasSetNonDefaultAddress();
@@ -226,8 +229,9 @@ const checkout = async (user) => {
     return acc;
   }, 0)
 
-  if (total > user.walletMoney) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "You do not have sufficient balance")
+
+  if(total > user.walletMoney){
+    throw new ApiError(httpStatus.BAD_REQUEST,"You do not have sufficient balance to chekout.")
   }
   user.walletMoney -= total;
   await user.save();
