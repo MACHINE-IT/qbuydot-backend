@@ -207,25 +207,28 @@ const deleteProductFromCart = async (user, productId) => {
  * @returns {Promise}
  * @throws {ApiError} when cart is invalid
  */
- const checkout = async (user) => {
-  const cart = await Cart.findOne({email:user.email})
+const checkout = async (user) => {
+  const cart = await Cart.findOne({ email: user.email })
+
 
   if(cart == null){
     throw new ApiError(httpStatus.NOT_FOUND,"You do not have a cart to checkout.");
   }
   if(cart.cartItems.length==0)
   {
-    throw new ApiError(httpStatus.BAD_REQUEST,"You do not have items in the cart to checkout.");
+    throw new ApiError(httpStatus.BAD_REQUEST,"You do not have any items in the cart to checkout.");
+
   }
 
   const hasSetNonDefaultAddress = await user.hasSetNonDefaultAddress();
-  if(!hasSetNonDefaultAddress)
-  throw new ApiError(httpStatus.BAD_REQUEST,"Address not set");
+  if (!hasSetNonDefaultAddress)
+    throw new ApiError(httpStatus.BAD_REQUEST, "Address not set");
 
-  const total = cart.cartItems.reduce((acc,item)=>{
-    acc=acc+(item.product.cost *item.quantity);
+  const total = cart.cartItems.reduce((acc, item) => {
+    acc = acc + (item.product.cost * item.quantity);
     return acc;
-  },0)
+  }, 0)
+
 
   if(total > user.walletMoney){
     throw new ApiError(httpStatus.BAD_REQUEST,"You do not have sufficient balance to chekout.")
@@ -233,7 +236,7 @@ const deleteProductFromCart = async (user, productId) => {
   user.walletMoney -= total;
   await user.save();
 
-  cart.cartItems= []
+  cart.cartItems = []
   await cart.save();
 };
 
