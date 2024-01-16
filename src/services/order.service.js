@@ -1,13 +1,12 @@
 const httpStatus = require("http-status");
 const { Cart, Product, Order } = require("../models");
-
 const ApiError = require("../utils/ApiError");
 const config = require("../config/config");
 
 
 const getOrdersByUser = async (user) => {
     const orders = await Order.find({ email: user.email });
-
+    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     if (!orders) {
         throw new ApiError(httpStatus.NOT_FOUND, "User does not have any orders placed!");
     }
@@ -16,7 +15,6 @@ const getOrdersByUser = async (user) => {
 };
 
 const addUserOrder = async (user, orderPayload) => {
-
     let orderItems = [];
 
     for (let i = 0; i < orderPayload.length; i++) {
