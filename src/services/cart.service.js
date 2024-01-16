@@ -1,5 +1,5 @@
 const httpStatus = require("http-status");
-const { Cart, Product } = require("../models");
+const { Order, Cart, Product } = require("../models");
 const ApiError = require("../utils/ApiError");
 const config = require("../config/config");
 
@@ -209,6 +209,7 @@ const deleteProductFromCart = async (user, productId) => {
  */
 const checkout = async (user) => {
   const cart = await Cart.findOne({ email: user.email })
+  console.log(`bhaiya cart items hai yeh sab: `, cart.cartItems)
 
   if (cart == null) {
     throw new ApiError(httpStatus.NOT_FOUND, "You do not have a cart. Please add items to purchase.");
@@ -231,6 +232,12 @@ const checkout = async (user) => {
   }
   user.walletMoney -= total;
   await user.save();
+
+  await Order.create({
+    email: user.email,
+    orderItems: cart.cartItems,
+    paymentOption: "PAYMENT_OPTION_DEFAULT",
+  });
 
   cart.cartItems = []
   await cart.save();

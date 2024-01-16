@@ -1,5 +1,5 @@
 const httpStatus = require("http-status");
-const { Product, Order } = require("../models");
+const { Cart, Product, Order } = require("../models");
 const ApiError = require("../utils/ApiError");
 const config = require("../config/config");
 
@@ -15,7 +15,6 @@ const getOrdersByUser = async (user) => {
 };
 
 const addUserOrder = async (user, orderPayload) => {
-
     let orderItems = [];
 
     for (let i = 0; i < orderPayload.length; i++) {
