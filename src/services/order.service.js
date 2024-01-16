@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
-const { Product, Order } = require("../models");
+const { Cart, Product, Order } = require("../models");
+
 const ApiError = require("../utils/ApiError");
 const config = require("../config/config");
 
