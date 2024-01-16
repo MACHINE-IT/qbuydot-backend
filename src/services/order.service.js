@@ -6,7 +6,7 @@ const config = require("../config/config");
 
 const getOrdersByUser = async (user) => {
     const orders = await Order.find({ email: user.email });
-
+    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     if (!orders) {
         throw new ApiError(httpStatus.NOT_FOUND, "User does not have any orders placed!");
     }
