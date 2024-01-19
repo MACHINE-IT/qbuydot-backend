@@ -238,6 +238,7 @@ const checkout = async (user) => {
   await Order.create({
     email: user.email,
     orderItems: cart.cartItems,
+    orderTotalCost: total,
     paymentOption: "PAYMENT_OPTION_DEFAULT",
   });
 
