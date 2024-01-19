@@ -209,7 +209,6 @@ const deleteProductFromCart = async (user, productId) => {
  */
 const checkout = async (user) => {
   const cart = await Cart.findOne({ email: user.email })
-  console.log(`bhaiya cart items hai yeh sab: `, cart.cartItems)
 
   if (cart == null) {
     throw new ApiError(httpStatus.NOT_FOUND, "You do not have a cart to checkout.");
@@ -238,6 +237,7 @@ const checkout = async (user) => {
   await Order.create({
     email: user.email,
     orderItems: cart.cartItems,
+    orderTotalCost: total,
     paymentOption: "PAYMENT_OPTION_DEFAULT",
   });
 

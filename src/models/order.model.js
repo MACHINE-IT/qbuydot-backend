@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { productSchema } = require("./product.model");
 const config = require("../config/config");
+const { number } = require('joi');
 
 const orderSchema = mongoose.Schema(
     {
@@ -21,6 +22,10 @@ const orderSchema = mongoose.Schema(
                 },
             },
         ],
+        orderTotalCost: {
+            type: Number,
+            required: true,
+        },
         paymentOption: {
             type: String,
             default: `PAYMENT OPTION_DEFAULT`,
