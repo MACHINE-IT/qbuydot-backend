@@ -4,6 +4,7 @@ const catchAsync = require("../utils/catchAsync");
 const { userService } = require("../services");
 const jwt = require("jsonwebtoken");
 const config = require("../config/config");
+const { suppressDeprecationWarnings } = require("moment");
 
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Implement getUser() function
 
@@ -88,14 +89,14 @@ const getUser = catchAsync(async (req, res) => {
     // if (authenticatedUserId !== userId) {
     //   throw new ApiError(httpStatus.FORBIDDEN, "User not found");
     // }
-    
+
   }
-      // If query param is "address", return only the address field
-      if (queryParam === "address") {
-        return res.status(httpStatus.OK).json({address: user.address});
-      }
-  
-      return res.status(httpStatus.OK).json(user);
+  // If query param is "address", return only the address field
+  if (queryParam === "address") {
+    return res.status(httpStatus.OK).json({ address: user.address });
+  }
+
+  return res.status(httpStatus.OK).json(user);
 
   // If user data doesn't exist, throw a 404 error
   throw new ApiError(httpStatus.NOT_FOUND, "User not found");
@@ -123,6 +124,47 @@ const createUser = async (req, res, next) => {
   //res.status(httpStatus.CREATED).json(user);
 };
 
+const editUser = async (req, res, next) => {
+  const user = await userService.getUserById(req.params.userId);
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  };
+
+  if (user.email != req.user.email) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "User not authorized to access this resource"
+    );
+  };
+
+  // Check if the name field is present in the request body
+  if (!req.body.name) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Name field is required");
+  }
+
+  if (req.body.name.length < 3) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Name should be minumum 3 letters")
+  }
+  if (req.body.name.length > 100) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Name cannot be more than 100 letters")
+  }
+
+  // Check if the address field is present in the request body
+  if (!req.body.address) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Address field is required");
+  }
+
+  if (req.body.address.length < 20) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Address should be atleast 20 characters long")
+  }
+
+  const updatedUser = await userService.editUser(user, req.body);
+
+  res.status(httpStatus.OK).send(updatedUser);
+
+}
+
 const setAddress = catchAsync(async (req, res) => {
   const user = await userService.getUserById(req.params.userId);
 
@@ -135,13 +177,13 @@ const setAddress = catchAsync(async (req, res) => {
       "User not authorized to access this resource"
     );
   }
-  
+
   // Check if the address field is present in the request body
   if (!req.body.address) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Address field is required");
   }
 
-  if(req.body.address.length < 20) {
+  if (req.body.address.length < 20) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Address should be atleast 20 characters long")
   }
 
@@ -156,5 +198,6 @@ const setAddress = catchAsync(async (req, res) => {
 module.exports = {
   getUser,
   createUser,
+  editUser,
   setAddress,
 };
