@@ -23,7 +23,7 @@ const getUserById = async (id) => {
  * @returns {Promise<User>}
  */
 
- const getUserByEmail = async(email) => {
+const getUserByEmail = async (email) => {
   const theUser = await User.findOne({ email });
   // console.log("theUserByMailId",theUser)
   return theUser;
@@ -70,19 +70,19 @@ const getUserById = async (id) => {
 
 const createUser = async (userBody) => {
   // try {
-    const emailTaken = await User.isEmailTaken(userBody.email);
-    if (emailTaken) {
-      throw new ApiError(httpStatus.OK, "Email already taken");
-    }
-    const hashedPassword = await bcrypt.hash(userBody.password, 10);
-    const newUser = await User.create({
-      name: userBody.name,
-      email: userBody.email,
-      password: hashedPassword,
-    });
-    // await newUser.save();
+  const emailTaken = await User.isEmailTaken(userBody.email);
+  if (emailTaken) {
+    throw new ApiError(httpStatus.OK, "Email already taken");
+  }
+  const hashedPassword = await bcrypt.hash(userBody.password, 10);
+  const newUser = await User.create({
+    name: userBody.name,
+    email: userBody.email,
+    password: hashedPassword,
+  });
+  // await newUser.save();
 
-    return newUser;
+  return newUser;
   // } catch (error) {
   //   if (error instanceof ApiError) {
   //     throw error;
@@ -103,7 +103,7 @@ const createUser = async (userBody) => {
  * @returns {Promise<User>}
  */
 const getUserAddressById = async (id) => {
-  const user = await User.findOne({ _id: id },  { address: 1, email: 1 });
+  const user = await User.findOne({ _id: id }, { address: 1, email: 1 });
 
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
@@ -111,6 +111,21 @@ const getUserAddressById = async (id) => {
 
   return user;
 };
+
+const editUser = async (user, req) => {
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: user._id },
+    { name: req.name, address: req.address },
+    { new: true } // Return the updated document
+  );
+
+  if (!updatedUser) {
+    // Handle the case where the user with the specified _id is not found
+    throw new Error("User not found");
+  }
+
+  return updatedUser;
+}
 
 /**
  * Set user's shipping address
@@ -128,6 +143,7 @@ module.exports = {
   getUserById,
   getUserByEmail,
   createUser,
+  editUser,
   getUserAddressById,
   setAddress,
 };

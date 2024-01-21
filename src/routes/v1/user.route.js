@@ -16,6 +16,13 @@ router.get(
   userController.getUser
 );
 
+router.patch(
+  "/:userId",
+  authMiddleware,
+  validate(userValidation.getUser),
+  userController.editUser
+);
+
 router.post(
   "/",
   validate(userValidation.createUser),
