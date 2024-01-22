@@ -152,6 +152,10 @@ const editUser = async (user, req, uniqueFileName) => {
   return updatedUser;
 }
 
+const deleteUser = () => {
+
+}
+
 /**
  * Set user's shipping address
  * @param {String} email
@@ -169,6 +173,7 @@ module.exports = {
   getUserByEmail,
   createUser,
   editUser,
+  deleteUser,
   getUserAddressById,
   setAddress,
 };
