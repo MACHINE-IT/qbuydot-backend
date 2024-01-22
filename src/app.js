@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require('path');
 const compression = require("compression");
 const cors = require("cors");
 const httpStatus = require("http-status");
@@ -8,6 +9,7 @@ const ApiError = require("./utils/ApiError");
 const { jwtStrategy } = require("./config/passport");
 const helmet = require("helmet");
 const passport = require("passport");
+const multer = require('multer');
 
 const app = express();
 
@@ -30,6 +32,9 @@ app.options("*", cors());
 // TODO: CRIO_TASK_MODULE_AUTH - Initialize passport and add "jwt" authentication strategy
 app.use(passport.initialize());
 passport.use("jwt", jwtStrategy);
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
 
 
 // Reroute all API request starting with "/v1" route

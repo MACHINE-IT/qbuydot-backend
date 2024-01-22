@@ -2,6 +2,9 @@ const { User } = require("../models");
 const httpStatus = require("http-status");
 const ApiError = require("../utils/ApiError");
 const bcrypt = require("bcryptjs");
+const path = require('path');
+const fs = require('fs');
+
 
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS - Implement getUserById(id)
 /**
@@ -112,10 +115,32 @@ const getUserAddressById = async (id) => {
   return user;
 };
 
-const editUser = async (user, req) => {
+
+const editUser = async (user, req, uniqueFileName) => {
+  // console.log(req)
+  const updateFields = {
+    name: req.name,
+    address: req.address,
+  };
+
+  if (uniqueFileName) {
+    updateFields.profileImagePath = uniqueFileName;
+  }
+
+  // if (file) {
+  //   const uniqueFileName = `${Date.now()}-${file.originalname}`;
+  //   const filePath = path.join(__dirname, 'uploads', uniqueFileName);
+
+  //   // Save the file to the server
+  //   fs.writeFileSync(filePath, file.buffer);
+
+  //   // Save the file path in the updateFields
+  //   updateFields.profileImagePath = filePath;
+  // }
+
   const updatedUser = await User.findOneAndUpdate(
     { _id: user._id },
-    { name: req.name, address: req.address },
+    { $set: updateFields },
     { new: true } // Return the updated document
   );
 

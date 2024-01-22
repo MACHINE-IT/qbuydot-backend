@@ -17,11 +17,9 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      lowercase:true,
-      validate(value)
-      {
-        if(!validator.isEmail(value))
-        {
+      lowercase: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
           throw new Error("Invalid Email")
         }
       }
@@ -30,7 +28,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      minength:8,
+      minength: 8,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
           throw new Error(
@@ -42,12 +40,15 @@ const userSchema = mongoose.Schema(
     walletMoney: {
       type: Number,
       required: true,
-      default:config.default_wallet_money
+      default: config.default_wallet_money
     },
     address: {
       type: String,
       default: config.default_address,
     },
+    profileImagePath: {
+      type: String,
+    }
   },
   // Create createdAt and updatedAt fields automatically
   {
@@ -72,11 +73,11 @@ const userSchema = mongoose.Schema(
 // });
 
 userSchema.statics.isEmailTaken = async function (email) {
-  const result = await this.find({email: email});
-    if(result.length)
-      return true;
-    else
-      return false;
+  const result = await this.find({ email: email });
+  if (result.length)
+    return true;
+  else
+    return false;
 };
 
 // TODO: CRIO_TASK_MODULE_UNDERSTANDING_BASICS
@@ -90,7 +91,7 @@ userSchema.methods.isPasswordMatch = async function (password) {
 
   // Use bcrypt to compare the provided password with the stored hashed password
   return bcrypt.compare(password, user.password);
-  
+
 };
 
 // // Pre-save hook to hash the password before saving it to the database
@@ -117,7 +118,7 @@ userSchema.methods.isPasswordMatch = async function (password) {
  */
 userSchema.methods.hasSetNonDefaultAddress = async function () {
   const user = this;
-   return user.address !== config.default_address;
+  return user.address !== config.default_address;
 };
 
 /*
@@ -131,4 +132,4 @@ userSchema.methods.hasSetNonDefaultAddress = async function () {
 
 const User = mongoose.model("User", userSchema);
 
-module.exports = {User};
+module.exports = { User };
