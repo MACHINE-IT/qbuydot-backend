@@ -54,6 +54,7 @@ router.patch(
   validate(userValidation.getUser),
   upload.single('profileImage'), // Using multer middleware for handeling file upload for validation and security checks to ensure that only valid image files are accepted.
   (req, res, next) => userController.editUser(req, res, next, `uploads/${uniqueFileName}`)
+
 );
 
 router.post(

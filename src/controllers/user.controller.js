@@ -124,7 +124,9 @@ const createUser = async (req, res, next) => {
   //res.status(httpStatus.CREATED).json(user);
 };
 
+
 const editUser = async (req, res, next, uniqueFileName) => {
+
   const user = await userService.getUserById(req.params.userId);
 
   if (!user) {
@@ -158,8 +160,10 @@ const editUser = async (req, res, next, uniqueFileName) => {
   if (req.body.address.length < 20) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Address should be atleast 20 characters long")
   }
+
   // console.log(`controller ki req:`, req)
   const updatedUser = await userService.editUser(user, req.body, uniqueFileName);
+
 
   res.status(httpStatus.OK).send(updatedUser);
 
