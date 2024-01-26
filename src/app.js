@@ -44,12 +44,12 @@ app.use("/v1", routes);
 
 
 
-app.use((req, res, next) => {
-    next(new ApiError(httpStatus.NOT_FOUND, "Route Not found"));
-});
+// app.use((req, res, next) => {
+//     next(new ApiError(httpStatus.NOT_FOUND, "Route Not found"));
+// });
 
 
-//handle error
-app.use(errorHandler);
+// //handle error
+// app.use(errorHandler);
 
 module.exports = app;
