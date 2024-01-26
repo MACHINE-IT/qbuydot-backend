@@ -169,6 +169,27 @@ const editUser = async (req, res, next, uniqueFileName) => {
 
 }
 
+const deleteUser = async (req, res) => {
+  const user = await userService.getUserById(req.params.userId);
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  };
+
+  if (user.email != req.user.email) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "User not authorized to access this resource"
+    );
+  };
+
+  const deletedUserResponse = await userService.deleteUser(user, req.body);
+
+
+  res.status(204).json(deletedUserResponse);
+
+}
+
 const setAddress = catchAsync(async (req, res) => {
   const user = await userService.getUserById(req.params.userId);
 
@@ -203,5 +224,6 @@ module.exports = {
   getUser,
   createUser,
   editUser,
+  deleteUser,
   setAddress,
 };

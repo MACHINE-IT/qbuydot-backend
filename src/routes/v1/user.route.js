@@ -70,4 +70,11 @@ router.put(
   userController.setAddress
 );
 
+router.delete(
+  "/:userId",
+  auth,
+  validate(userValidation.getUser),
+  userController.deleteUser
+)
+
 module.exports = router;

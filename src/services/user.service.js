@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Order, Cart } = require("../models");
 const httpStatus = require("http-status");
 const ApiError = require("../utils/ApiError");
 const bcrypt = require("bcryptjs");
@@ -152,7 +152,27 @@ const editUser = async (user, req, uniqueFileName) => {
   return updatedUser;
 }
 
-const deleteUser = () => {
+const deleteUser = async (user, userBody) => {
+  try {
+    await User.deleteOne({ email: user.email });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+  try {
+    await Order.deleteMany({ email: user.email });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+  try {
+    await Cart.deleteOne({ email: user.email });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+
+  return { message: "Account deleted successfuly!" }
+
 
 }
 
